@@ -14,16 +14,15 @@ fun {MaxList Xs}
   end
 end
 Statement = [var ident(x) 
-              [var ident(y)
+              [[var ident(y)
                 [var ident(x)
                   [nop]
                 ]
               ]
-              [nop]
+              [nop]]
             ]
-InitialStack = [semanticstack(Statement {Dictionary.new})]
+InitialStack = [semanticstack(Statement environment())]
 proc {Execute SematicStack SingleAssignmentStore}
-  % {Browse [SematicStack SingleAssignmentStore]}
   case SematicStack
   of StackHead|RemainingStack then
     case StackHead 
@@ -35,16 +34,20 @@ proc {Execute SematicStack SingleAssignmentStore}
         elseif H == var then
           case T.1
           of ident(X) then
-            {Browse [locaal(X) sin T.2.1]}
-            {Dictionary.put Environment X {MaxList {Dictionary.keys SingleAssignmentStore}}+1}
-            {Execute semanticstack(T.2.1 Environment)|RemainingStack SingleAssignmentStore}
+            local NewVar in
+              NewVar = {MaxList {Dictionary.items SingleAssignmentStore}}+1
+              {Browse [locaal(X) sin T.2.1]}
+              {Dictionary.put SingleAssignmentStore X NewVar}
+              {Execute semanticstack(T.2.1 {Adjoin Environment environment(X:NewVar) })|RemainingStack SingleAssignmentStore}
+            end
           end
         else
           {Execute {Concat {Map Statement fun {$ A} semanticstack(A Environment) end} RemainingStack} SingleAssignmentStore}
         end
       end
     end
+  else
+    {Browse done}
   end
 end
 {Execute InitialStack {Dictionary.new}}
-{Browse {FoldL [2 3 4].2 Max [2 3 4].1}}
