@@ -19,8 +19,13 @@ Statement = [var ident(x)
               [[var ident(y)
                 [var ident(x)
                   [
-                    [bind ident(x) ident(y)]
+                    % [bind ident(x) ident(y)]
                     [bind ident(x) literal(99)]
+                    [bind ident(y) [record literal(a) 
+                      [ [literal(feature1) ident(x1)] 
+                        [literal(feature2) ident(x2)]
+                      ]]
+                    ]
                   ]
                 ]
               ]
@@ -51,10 +56,8 @@ proc {Execute SematicStack}
         elseif H == var then
           case T.1
           of ident(X) then
-            % local NewVar in
             {Browse [locaal(X) sin T.2.1]}
             {Execute semanticstack(T.2.1 {Adjoin Environment environment(X:{InsertIntoSAS}) })|RemainingStack}
-            % end
           end
         elseif H == bind then
           {Unify T.1 T.2.1 Environment}

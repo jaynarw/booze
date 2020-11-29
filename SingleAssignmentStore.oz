@@ -39,10 +39,20 @@ end
 % and Exp2 is not an equivalence class
 % ========================================
 proc {BindValueToKeyInSAS X Exp2}
-  local KeysOfX in
-    KeysOfX = {Filter {Dictionary.entries SAS} fun {$ A} A.2 == equivalence(X) end}
-    {ForAll KeysOfX proc {$ A} {Dictionary.put SAS A.1 Exp2} end}
-  end 
+  case Exp2 
+  of literal(Y) then
+    local KeysOfX in
+      KeysOfX = {Filter {Dictionary.entries SAS} fun {$ A} A.2 == equivalence(X) end}
+      {ForAll KeysOfX proc {$ A} {Dictionary.put SAS A.1 literal(Y)} end}
+    end 
+  [] [record Y Z] then
+    local KeysOfX in
+      KeysOfX = {Filter {Dictionary.entries SAS} fun {$ A} A.2 == equivalence(X) end}
+      {ForAll KeysOfX proc {$ A} {Dictionary.put SAS A.1 [record Y Z]} end}
+    end
+  [] [pproc Y S] then
+    {Browse [handle p r o c]}
+  end
 end
 
 proc {PrettyPrint D}
