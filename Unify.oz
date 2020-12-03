@@ -68,7 +68,9 @@ in
 	 of equivalence(X) then
 	    case Exp2
 	    of equivalence(Y) then {BindRefToKeyInSAS X Y}
-	    else {BindValueToKeyInSAS X Exp2} end
+	    else 
+         {BindValueToKeyInSAS X Exp2} 
+      end
 	 [] literal(X) then
 	    case Exp2
 	    of equivalence(_) then

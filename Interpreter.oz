@@ -19,12 +19,20 @@ Statement = [var ident(x)
               [[var ident(y)
                 [var ident(x)
                   [
-                    % [bind ident(x) ident(y)]
-                    [bind ident(x) literal(99)]
-                    [bind ident(y) [record literal(a) 
-                      [ [literal(feature1) ident(x1)] 
-                        [literal(feature2) ident(x2)]
-                      ]]
+                    [var ident(x1)
+                      [var ident(x2)
+                    
+                        % [bind ident(x) ident(y)]
+                        [
+                          [bind ident(x) literal(99)]
+                          [bind ident(y) [record ident(x1) 
+                            [ [ident(x1) ident(x1)] 
+                              [literal(feature2) ident(x2)]
+                            ]]
+                          ]
+                          [bind ident(x1) literal(1)]
+                        ]
+                      ]
                     ]
                   ]
                 ]
