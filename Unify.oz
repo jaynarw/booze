@@ -31,9 +31,16 @@ in
    %=================
    fun {SubstituteIdentifiers Exp Env}
       case Exp
-      of H|T then  
+      of [pproc _ _] then
+         Exp
+      [] H|T then  
 	 {SubstituteIdentifiers H Env}|{SubstituteIdentifiers T Env}
-      [] ident(X) then {RetrieveFromSAS Env.X}
+      [] ident(X) then 
+         if {Value.hasFeature Env X} then
+            {RetrieveFromSAS Env.X}
+         else
+            raise variableNotDeclared(X) end
+         end
       else Exp end
    end
 
@@ -69,7 +76,7 @@ in
 	    case Exp2
 	    of equivalence(Y) then {BindRefToKeyInSAS X Y}
 	    else 
-         {BindValueToKeyInSAS X Exp2} 
+         {BindValueToKeyInSAS X Exp2 Env} 
       end
 	 [] literal(X) then
 	    case Exp2
@@ -96,6 +103,12 @@ in
 		_}
 	    else raise incompatibleTypes(Exp1 Exp2) end
 	    end %
+    [] pproc | IdentList| Stmt then % Added this part as well
+       case Exp2
+       of equivalence(_) then
+         {UnifyRecursive Exp2 Exp1 Unifications}
+       else raise incompatibleTypes(Exp1 Exp2) end
+       end
 	 else
 	    raise incompatibleTypes(Exp1 Exp2) end
 	 end
